@@ -1,0 +1,21 @@
+{
+  "version": "template-placeholder",
+  "description": "Placeholder bundle. Real model is emitted by ml/train_mvp_template.py (Kaggle) and replaces this file with trained weights.",
+  "labels": [
+    "AMI", "TUMI", "DOKTAR", "HOSPITAL", "OSHUDH", "BYATHA", "JHURI", "KASHI",
+    "SHWASHKOSTHO", "MATHA_GHORA", "ROKTO", "PANIR_ONTO", "PHIRING", "AGUN",
+    "POLICE", "AMBULENS", "JORURI", "SHAHAYJO", "KHADYA", "PANI", "KHELA",
+    "GHUM", "PORISHROM", "BARI", "SKUL", "OFFISH", "FORM", "NID",
+    "JONMO_NIBONDHON", "SWAKSHOR", "THIKANA", "CERTIFICATE", "PHOTO", "TAKA",
+    "KOTO", "KOTHAY", "KOKHON", "KENO", "KI", "HAE", "NA", "DHONNOBAD",
+    "SORRY", "BUJHCHHI", "BUJHINI", "ABAR", "DHIRE", "PRESH", "SHOIROM",
+    "OBHAW", "KHADDHO_SHORTO", "PORE", "LEKHA", "PORISHKAR", "AMR_ABBU",
+    "AMR_AMMU", "CHATRO", "OBHIBHABOK", "PROYUJON", "ACHHE", "unknown"
+  ],
+  "window_frames": 30,
+  "stride": 5,
+  "mean": [],
+  "std": [],
+  "weights": [],
+  "bias": []
+}

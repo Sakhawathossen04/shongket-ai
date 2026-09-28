@@ -1,0 +1,40 @@
+name: shongket_ai
+description: >-
+  Shongket AI — an offline, confidence-aware two-way Bangla Sign Language
+  communication companion for essential public services (hospital, emergency,
+  government). Built for ZRF.
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Camera stream for pose landmarks (sign recognition)
+  camera: ">=0.10.5+9 <0.13.0"
+
+  # On-device pose landmarks (ML Kit, works offline)
+  google_mlkit_pose_detection: ">=0.10.0 <0.14.0"
+  google_mlkit_commons: ">=0.6.0 <0.10.0"
+
+  # Bangla text-to-speech and speech-to-text
+  flutter_tts: ">=4.0.0 <5.0.0"
+  speech_to_text: ">=6.6.0 <8.0.0"
+
+  # Local settings storage
+  shared_preferences: ">=2.2.0 <3.0.0"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ">=3.0.0 <6.0.0"
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/vocab/bdsl_vocab.json
+    - assets/models/bdsl_mvp.json

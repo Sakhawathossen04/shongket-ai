@@ -1,0 +1,95 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "lib/**"
+      - "pubspec.yaml"
+      - "assets/**"
+      - ".github/workflows/build_apk.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Flutter version
+        run: flutter --version
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Verify formatting (non-blocking)
+        run: dart format --output=none --set-exit-if-changed lib || true
+
+      - name: Analyze (non-blocking for hackathon)
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings || true
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Scaffold android/ folder (flutter create)
+        run: |
+          if [ ! -f android/app/build.gradle ]; then
+            flutter create --platforms=android --org bd.shongket --project-name shongket_ai .
+          fi
+
+      - name: Ensure app manifest has permissions
+        run: |
+          MANIFEST=android/app/src/main/AndroidManifest.xml
+          if [ -f "$MANIFEST" ] && ! grep -q "android.permission.CAMERA" "$MANIFEST"; then
+            python3 -c "import re; p='android/app/src/main/AndroidManifest.xml'; s=open(p,encoding='utf-8').read(); perms=''.join(f'\\n    <uses-permission android:name=\"android.permission.{n}\" />' for n in ['CAMERA','RECORD_AUDIO','INTERNET','ACCESS_NETWORK_STATE']); s=s.replace('<application', perms+'\\n    <application',1); open(p,'w',encoding='utf-8').write(s); print('permissions patched')"
+          fi
+
+      - name: Lower minSdk to 24 if needed
+        run: |
+          # camera + mlkit need minSdk >= 21/24; flutter template defaults handle
+          # this via flutter.minSdkVersion, so only patch legacy values.
+          if [ -f android/app/build.gradle ] && grep -q "minSdkVersion 16" android/app/build.gradle; then
+            sed -i 's/minSdkVersion 16/minSdkVersion 24/' android/app/build.gradle
+          fi
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Rename APK
+        run: |
+          mkdir -p dist
+          cp build/app/outputs/flutter-apk/app-release.apk \
+             dist/shongket-ai-v${{ github.run_number }}.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: shongket-ai-apk
+          path: dist/*.apk
+          if-no-files-found: error
+
+      - name: Attach to release (latest tag)
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-v${{ github.run_number }}
+          name: Shongket AI APK (build ${{ github.run_number }})
+          files: dist/*.apk
+          body: |
+            Offline BdSL communication MVP. Install on Android 7.0+.
+            This is a signed-with-debug-keys release build for the ZRF demo.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
