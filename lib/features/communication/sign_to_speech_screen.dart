@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/root_app.dart';
 import '../../core/providers/app_providers.dart';
+import '../../core/providers/sign_recognition_controller.dart';
 import '../../core/services/pose_classifier.dart';
 
 /// Deaf → Hearing screen: camera stream → pose landmarks → sign

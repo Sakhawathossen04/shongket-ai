@@ -35,10 +35,20 @@
             android:value="2" />
     </application>
 
+    <!-- Camera optional (emulators/PCs without camera still installable) -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- Required by speech_to_text on Android 11+ to discover the
+             platform speech recognizer -->
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
         </intent>
     </queries>
 </manifest>
