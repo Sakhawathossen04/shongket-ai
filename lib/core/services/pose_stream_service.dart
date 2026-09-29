@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'dart:ui' as ui show Size;
 
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart' show WriteBuffer;
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 
@@ -51,14 +50,13 @@ class PoseStreamService {
     if (format == null) return null;
 
     // Concatenate all planes (single plane for NV21, three for YUV420).
-    final WriteBuffer buffer = WriteBuffer();
+    final buffer = BytesBuilder();
     for (final plane in image.planes) {
-      buffer.putUint8List(plane.bytes);
+      buffer.add(plane.bytes);
     }
-    final Uint8List bytes = buffer.done().buffer.asUint8List();
 
     return InputImage.fromBytes(
-      bytes: bytes,
+      bytes: buffer.toBytes(),
       metadata: InputImageMetadata(
         size: imageSize,
         rotation: rotation,

@@ -10,8 +10,6 @@ class TtsService {
   Future<void> init() async {
     if (_ready) return;
     try {
-      await _tts.setStartHandler(() {});
-      await _tts.setCompletionHandler(() {});
       final langs = await _tts.getLanguages;
       final list = (langs is List) ? langs.map((e) => e.toString()).toList() : <String>[];
       _bnVoiceAvailable =

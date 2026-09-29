@@ -17,8 +17,8 @@ dependencies:
   camera: ">=0.10.5+9 <0.13.0"
 
   # On-device pose landmarks (ML Kit, works offline)
-  google_mlkit_pose_detection: ">=0.10.0 <0.14.0"
-  google_mlkit_commons: ">=0.6.0 <0.10.0"
+  google_mlkit_pose_detection: ">=0.10.0 <1.0.0"
+  google_mlkit_commons: ">=0.6.0 <1.0.0"
 
   # Bangla text-to-speech and speech-to-text
   flutter_tts: ">=4.0.0 <5.0.0"

@@ -51,7 +51,6 @@ class SosScreen extends StatelessWidget {
               foregroundColor: Colors.white,
             ),
             onPressed: () {
-              const all = 'আমি বধির। আমার চিকিৎসা প্রয়োজন। অনুগ্রহ করে সাহায্য করুন।';
               showDialog<void>(
                 context: context,
                 builder: (ctx) => AlertDialog(

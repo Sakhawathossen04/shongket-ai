@@ -5,6 +5,7 @@ on:
     branches: [main, master]
     paths:
       - "lib/**"
+      - "test/**"
       - "pubspec.yaml"
       - "assets/**"
       - ".github/workflows/build_apk.yml"
@@ -18,9 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -28,21 +29,13 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          cache: true
 
       - name: Flutter version
         run: flutter --version
 
       - name: Get dependencies
         run: flutter pub get
-
-      - name: Verify formatting (non-blocking)
-        run: dart format --output=none --set-exit-if-changed lib || true
-
-      - name: Analyze (non-blocking for hackathon)
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings || true
-
-      - name: Run tests
-        run: flutter test
 
       - name: Scaffold android/ folder (flutter create)
         run: |
@@ -54,16 +47,20 @@ jobs:
         run: |
           MANIFEST=android/app/src/main/AndroidManifest.xml
           if [ -f "$MANIFEST" ] && ! grep -q "android.permission.CAMERA" "$MANIFEST"; then
-            python3 -c "import re; p='android/app/src/main/AndroidManifest.xml'; s=open(p,encoding='utf-8').read(); perms=''.join(f'\\n    <uses-permission android:name=\"android.permission.{n}\" />' for n in ['CAMERA','RECORD_AUDIO','INTERNET','ACCESS_NETWORK_STATE']); s=s.replace('<application', perms+'\\n    <application',1); open(p,'w',encoding='utf-8').write(s); print('permissions patched')"
+            python3 -c "import re; p='android/app/src/main/AndroidManifest.xml'; s=open(p,encoding='utf-8').read(); perms=''.join(f'\\n    <uses-permission android:name=\\\"android.permission.{n}\\\" />' for n in ['CAMERA','RECORD_AUDIO','INTERNET','ACCESS_NETWORK_STATE']); s=s.replace('<application', perms+'\\n    <application',1); open(p,'w',encoding='utf-8').write(s); print('permissions patched')"
           fi
 
       - name: Lower minSdk to 24 if needed
         run: |
-          # camera + mlkit need minSdk >= 21/24; flutter template defaults handle
-          # this via flutter.minSdkVersion, so only patch legacy values.
           if [ -f android/app/build.gradle ] && grep -q "minSdkVersion 16" android/app/build.gradle; then
             sed -i 's/minSdkVersion 16/minSdkVersion 24/' android/app/build.gradle
           fi
+
+      - name: Analyze (non-blocking for hackathon)
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings || true
+
+      - name: Run tests
+        run: flutter test
 
       - name: Build release APK
         run: flutter build apk --release

@@ -210,7 +210,8 @@ class SignClassifier {
     }
 
     final top = candidates.first;
-    final confident = top.confidence >= acceptThreshold && !top.isUnknown;
+    final confident =
+        top.confidence >= acceptThreshold && top.entry.id != unknownSignId;
     return RecognitionResult(
       top: top,
       candidates: candidates,

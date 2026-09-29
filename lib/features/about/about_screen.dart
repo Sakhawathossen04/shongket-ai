@@ -49,7 +49,7 @@ class AboutScreen extends StatelessWidget {
                                 child: Text(
                                   placeholder
                                       ? 'Template placeholder — প্রকৃত trained model Kaggle pipeline থেকে আসবে'
-                                      : 'Trained model loaded (v${model.bundle.version})',
+                                      : 'Trained model loaded (v${model!.bundle.version})',
                                 ),
                               ),
                             ],
